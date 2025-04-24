@@ -32,6 +32,8 @@ func (s *server) run() {
 			s.msg(cmd.client, cmd.args)
 		case CMD_QUIT:
 			s.quit(cmd.client)
+		case CMD_HELP:
+			s.help(cmd.client)
 		}
 	}
 }
@@ -41,14 +43,17 @@ func (s *server) newClient(conn net.Conn) *client {
 
 	return &client{
 		conn:     conn,
-		nick:     "anonymous",
 		commands: s.commands,
 	}
 }
 
 func (s *server) nick(c *client, args []string) {
-	if len(args) < 2 {
+	if len(args) != 2 || args[1] == "" {
 		c.msg("nick is required. usage: /nick NAME")
+		return
+	}
+	if len(args[1]) > 20 {
+		c.msg("nick is too large, the limit is 20 characters")
 		return
 	}
 
@@ -59,6 +64,10 @@ func (s *server) nick(c *client, args []string) {
 func (s *server) join(c *client, args []string) {
 	if len(args) < 2 {
 		c.msg("room name is required. usage: /join ROOM_NAME")
+		return
+	}
+	if len(args[1]) > 30 {
+		c.msg("room name is too large, the limit is 30 characters")
 		return
 	}
 
@@ -108,6 +117,10 @@ func (s *server) quit(c *client) {
 
 	c.msg("sad to see you go :(")
 	c.conn.Close()
+}
+
+func (s *server) help(c *client) {
+	c.msg("the list of all available commands are:\n /nick\n /rooms\n /join\n /quit")
 }
 
 func (s *server) quitCurrentRoom(c *client) {
