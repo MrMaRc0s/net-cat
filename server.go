@@ -101,13 +101,12 @@ func (s *server) listRooms(c *client) {
 }
 
 func (s *server) msg(c *client, args []string) {
-	if len(args) < 2 {
-		c.msg("message is required, usage: /msg MSG")
-		return
-	}
-
 	msg := strings.Join(args[1:], " ")
-	c.room.broadcast(c, c.nick+": "+msg)
+	if c.room != nil {
+		c.room.broadcast(c, c.nick+": "+msg)
+	} else {
+		c.msg("join a room first n'wah")
+	}
 }
 
 func (s *server) quit(c *client) {
