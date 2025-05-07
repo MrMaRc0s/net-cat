@@ -6,6 +6,4 @@
 
 - The server respond with a linux logo and ask for the name
 
-- Timestamp on messages sent
-
 - Message History

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 type server struct {
@@ -103,7 +104,7 @@ func (s *server) listRooms(c *client) {
 func (s *server) msg(c *client, args []string) {
 	msg := strings.Join(args[1:], " ")
 	if c.room != nil {
-		c.room.broadcast(c, c.nick+": "+msg)
+		c.room.broadcast(c, "["+time.Now().Format("2006-01-02 15:04:05")+"] "+c.nick+": "+msg)
 	} else {
 		c.msg("join a room first n'wah")
 	}
