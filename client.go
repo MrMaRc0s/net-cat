@@ -93,6 +93,7 @@ func (c *client) welcome() {
 		client: c,
 		args:   []string{"/nick", nickname},
 	}
+	c.readInput()
 }
 
 func (c *client) err(err error) {

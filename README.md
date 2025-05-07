@@ -4,6 +4,4 @@
 
 - Client disconnecting issues (fix: mutex)
 
-- The server respond with a linux logo and ask for the name
-
 - Message History

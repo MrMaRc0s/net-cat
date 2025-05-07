@@ -25,7 +25,7 @@ func main() {
 		}
 
 		c := s.newClient(conn)
-		c.welcome()
-		go c.readInput()
+
+		go c.welcome()
 	}
 }
