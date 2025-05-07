@@ -78,6 +78,21 @@ func (c *client) welcome() {
 	}
 	entryMsg := "Welcome to TCP-Chat!\n" + string(pinguin) + "\n[ENTER THY NAME N'WAH]: "
 	c.conn.Write([]byte("> " + entryMsg))
+
+	reader := bufio.NewReader(c.conn)
+	nickname, err := reader.ReadString('\n')
+	if err != nil {
+		c.err(err)
+		return
+	}
+
+	nickname = strings.Trim(nickname, "\r\n")
+
+	c.commands <- command{
+		id:     CMD_NICK,
+		client: c,
+		args:   []string{"/nick", nickname},
+	}
 }
 
 func (c *client) err(err error) {
