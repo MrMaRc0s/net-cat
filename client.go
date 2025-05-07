@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"net"
+	"os"
 	"strings"
 )
 
@@ -68,6 +69,15 @@ func (c *client) readInput() {
 			}
 		}
 	}
+}
+
+func (c *client) welcome() {
+	pinguin, err := os.ReadFile("pinguin.txt")
+	if err != nil {
+		log.Printf("error: %s", err)
+	}
+	entryMsg := "Welcome to TCP-Chat!\n" + string(pinguin) + "\n[ENTER THY NAME N'WAH]: "
+	c.conn.Write([]byte("> " + entryMsg))
 }
 
 func (c *client) err(err error) {
