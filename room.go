@@ -1,13 +1,19 @@
 package main
 
-import "net"
+import (
+	"net"
+	"sync"
+)
 
 type room struct {
 	name    string
 	members map[net.Addr]*client
+	sync.RWMutex
 }
 
 func (r *room) broadcast(sender *client, msg string) {
+	r.RLock()
+	defer r.RUnlock()
 	for addr, m := range r.members {
 		if sender.conn.RemoteAddr() != addr {
 			m.msg(msg)

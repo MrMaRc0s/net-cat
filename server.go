@@ -5,12 +5,15 @@ import (
 	"log"
 	"net"
 	"strings"
+	"sync"
 	"time"
 )
 
 type server struct {
 	rooms    map[string]*room
 	commands chan command
+	wg       sync.WaitGroup
+	sync.RWMutex
 }
 
 func newServer() *server {
@@ -41,6 +44,8 @@ func (s *server) run() {
 
 func (s *server) newClient(conn net.Conn) *client {
 	log.Printf("new client has connected: %s", conn.RemoteAddr().String())
+
+	s.wg.Add(1)
 
 	return &client{
 		conn:     conn,
@@ -117,6 +122,8 @@ func (s *server) quit(c *client) {
 
 	c.msg("sad to see you go :(")
 	c.conn.Close()
+
+	s.wg.Done()
 }
 
 func (s *server) help(c *client) {

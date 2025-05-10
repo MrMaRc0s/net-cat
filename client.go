@@ -16,10 +16,18 @@ type client struct {
 }
 
 func (c *client) readInput() {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("client %s disconnected abruptly", c.conn.RemoteAddr())
+		}
+	}()
+
 	for {
 		msg, err := bufio.NewReader(c.conn).ReadString('\n')
 		if err != nil {
-			log.Fatal("connection was closed")
+			log.Printf("client %s has disconnected: %v", c.conn.RemoteAddr(), err)
+			c.commands <- command{id: CMD_QUIT, client: c}
+			return
 		}
 
 		msg = strings.Trim(msg, "\r\n")
@@ -93,7 +101,7 @@ func (c *client) welcome() {
 		client: c,
 		args:   []string{"/nick", nickname},
 	}
-	c.readInput()
+	go c.readInput()
 }
 
 func (c *client) err(err error) {
