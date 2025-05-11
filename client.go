@@ -94,7 +94,7 @@ func (c *client) welcome() {
 		return
 	}
 	nickname = strings.Trim(nickname, "\r\n")
-	if nickname == "" {
+	if strings.TrimSpace(nickname) == "" {
 		nickname = "Anonymous"
 	}
 
