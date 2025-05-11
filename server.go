@@ -123,7 +123,7 @@ func (s *server) quit(c *client) {
 	c.msg("sad to see you go :(")
 	c.conn.Close()
 
-	s.wg.Done()
+	//s.wg.Done()
 }
 
 func (s *server) help(c *client) {
