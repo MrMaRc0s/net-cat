@@ -93,8 +93,10 @@ func (c *client) welcome() {
 		c.err(err)
 		return
 	}
-
 	nickname = strings.Trim(nickname, "\r\n")
+	if nickname == "" {
+		nickname = "Anonymous"
+	}
 
 	c.commands <- command{
 		id:     CMD_NICK,

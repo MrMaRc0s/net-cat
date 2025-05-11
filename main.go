@@ -33,6 +33,7 @@ func main() {
 	log.Printf("started server on %s", port)
 
 	for {
+		//fmt.Println(runtime.NumGoroutine(), "active goroutines")
 		conn, err := listener.Accept()
 		if err != nil {
 			log.Printf("unable to accept connection: %s", err.Error())
