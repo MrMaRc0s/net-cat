@@ -11,7 +11,9 @@ func main() {
 	s := newServer()
 	go s.run()
 
-	listener, err := net.Listen("tcp", ":8989")
+	port := AssingPort()
+
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("unable to start server: %s", err.Error())
 	}
@@ -28,7 +30,7 @@ func main() {
 		os.Exit(0)
 	}()
 
-	log.Printf("started server on :8989")
+	log.Printf("started server on %s", port)
 
 	for {
 		conn, err := listener.Accept()
