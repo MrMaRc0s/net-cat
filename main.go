@@ -23,14 +23,8 @@ func main() {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-	go func() {
-		<-stop
-		log.Println("shutting down...")
-		listener.Close()
-		close(s.commands)
-		s.wg.Wait()
-		os.Exit(0)
-	}()
+
+	go handleShutdown(stop, listener, s)
 
 	defer DeleteFile(filename)
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -107,9 +108,14 @@ func (s *server) listRooms(c *client) {
 }
 
 func (s *server) msg(c *client, args []string) {
+	file, _ := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	defer file.Close()
+
 	msg := strings.Join(args[1:], " ")
+	msgline := "[" + time.Now().Format("2006-01-02 15:04:05") + "]" + "[" + c.nick + "]" + ": " + msg
 	if c.room != nil {
-		c.room.broadcast(c, "["+time.Now().Format("2006-01-02 15:04:05")+"] "+c.nick+": "+msg)
+		c.room.broadcast(c, msgline)
+		file.WriteString(msgline + "\n")
 	} else {
 		c.msg("join a room first n'wah")
 	}

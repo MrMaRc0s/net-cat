@@ -31,3 +31,12 @@ func recoverFromPanic(clientAddr net.Addr) {
 		log.Printf("client %s disconnected abruptly: %v", clientAddr, r)
 	}
 }
+
+func handleShutdown(stop chan os.Signal, listener net.Listener, s *server) {
+	<-stop
+	log.Println("shutting down...")
+	listener.Close()
+	close(s.commands)
+	s.wg.Wait()
+	os.Exit(0)
+}

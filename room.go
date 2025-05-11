@@ -12,11 +12,10 @@ type room struct {
 }
 
 func (r *room) broadcast(sender *client, msg string) {
+
 	r.RLock()
 	defer r.RUnlock()
-	for addr, m := range r.members {
-		if sender.conn.RemoteAddr() != addr {
-			m.msg(msg)
-		}
+	for _, m := range r.members {
+		m.msg(msg)
 	}
 }
