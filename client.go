@@ -16,12 +16,11 @@ type client struct {
 }
 
 func (c *client) readInput() {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("client %s disconnected abruptly", c.conn.RemoteAddr())
-		}
-	}()
+	defer recoverFromPanic(c.conn.RemoteAddr())
 
+	file, _ := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+
+	defer file.Close()
 	for {
 		msg, err := bufio.NewReader(c.conn).ReadString('\n')
 		if err != nil {
@@ -59,6 +58,10 @@ func (c *client) readInput() {
 				client: c,
 				args:   args,
 			}
+			for i := 1; i < len(args)-1; i++ {
+				file.WriteString(args[i] + " ")
+			}
+			file.WriteString(args[len(args)-1] + "\n")
 		case "/quit":
 			c.commands <- command{
 				id:     CMD_QUIT,
@@ -75,6 +78,10 @@ func (c *client) readInput() {
 				client: c,
 				args:   args,
 			}
+			for i := 1; i < len(args)-1; i++ {
+				file.WriteString(args[i] + " ")
+			}
+			file.WriteString(args[len(args)-1] + "\n")
 		}
 	}
 }

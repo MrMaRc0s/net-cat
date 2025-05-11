@@ -1,6 +1,11 @@
 package main
 
-import "os"
+import (
+	"fmt"
+	"log"
+	"net"
+	"os"
+)
 
 func AssingPort() string {
 	var port string
@@ -10,4 +15,19 @@ func AssingPort() string {
 		port = ":8989"
 	}
 	return port
+}
+
+func DeleteFile(filename string) {
+	err := os.Remove(filename)
+	if err != nil {
+		fmt.Println("Error deleting file:", err)
+	} else {
+		fmt.Println("File deleted successfully!")
+	}
+}
+
+func recoverFromPanic(clientAddr net.Addr) {
+	if r := recover(); r != nil {
+		log.Printf("client %s disconnected abruptly: %v", clientAddr, r)
+	}
 }

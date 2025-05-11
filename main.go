@@ -7,6 +7,8 @@ import (
 	"os/signal"
 )
 
+var filename string = "chatHistory"
+
 func main() {
 	s := newServer()
 	go s.run()
@@ -29,6 +31,8 @@ func main() {
 		s.wg.Wait()
 		os.Exit(0)
 	}()
+
+	defer DeleteFile(filename)
 
 	log.Printf("started server on %s", port)
 
