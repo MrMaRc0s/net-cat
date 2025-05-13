@@ -27,49 +27,57 @@ func (c *client) readInput() {
 		}
 
 		msg = strings.Trim(msg, "\r\n")
-
 		args := strings.Split(msg, " ")
 		cmd := strings.TrimSpace(args[0])
 
-		switch cmd {
-		case "/nick":
-			c.commands <- command{
-				id:     CMD_NICK,
-				client: c,
-				args:   args,
+		// Check if the message starts with "/"
+		if strings.HasPrefix(cmd, "/") {
+			switch cmd {
+			case "/nick":
+				c.commands <- command{
+					id:     CMD_NICK,
+					client: c,
+					args:   args,
+				}
+			case "/join":
+				c.commands <- command{
+					id:     CMD_JOIN,
+					client: c,
+					args:   args,
+				}
+			case "/rooms":
+				c.commands <- command{
+					id:     CMD_ROOMS,
+					client: c,
+				}
+			case "/msg":
+				c.commands <- command{
+					id:     CMD_MSG,
+					client: c,
+					args:   args,
+				}
+			case "/quit":
+				c.commands <- command{
+					id:     CMD_QUIT,
+					client: c,
+				}
+			case "/help":
+				c.commands <- command{
+					id:     CMD_HELP,
+					client: c,
+				}
+			default:
+				c.commands <- command{
+					id:     CMD_HELP,
+					client: c,
+				}
 			}
-		case "/join":
-			c.commands <- command{
-				id:     CMD_JOIN,
-				client: c,
-				args:   args,
-			}
-		case "/rooms":
-			c.commands <- command{
-				id:     CMD_ROOMS,
-				client: c,
-			}
-		case "/msg":
+		} else {
+			// Handle regular message (non-command)
 			c.commands <- command{
 				id:     CMD_MSG,
 				client: c,
-				args:   args,
-			}
-		case "/quit":
-			c.commands <- command{
-				id:     CMD_QUIT,
-				client: c,
-			}
-		case "/help":
-			c.commands <- command{
-				id:     CMD_HELP,
-				client: c,
-			}
-		default:
-			c.commands <- command{
-				id:     CMD_MSG,
-				client: c,
-				args:   args,
+				args:   []string{"/msg", msg}, // Treat the entire message as content
 			}
 		}
 	}
