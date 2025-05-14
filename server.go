@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net"
@@ -96,6 +97,22 @@ func (s *server) join(c *client, args []string) {
 	r.broadcast(c, fmt.Sprintf("%s has joined the room", c.nick))
 
 	c.msg(fmt.Sprintf("welcome to %s", r.name))
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		c.msg(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading file:", err)
+	}
+
 }
 
 func (s *server) listRooms(c *client) {
