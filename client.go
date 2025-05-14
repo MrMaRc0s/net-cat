@@ -84,6 +84,7 @@ func (c *client) readInput() {
 }
 
 func (c *client) welcome() {
+back:
 	pinguin, err := os.ReadFile("pinguin.txt")
 	if err != nil {
 		log.Printf("error: %s", err)
@@ -99,7 +100,7 @@ func (c *client) welcome() {
 	}
 	nickname = strings.Trim(nickname, "\r\n")
 	if strings.TrimSpace(nickname) == "" {
-		nickname = "Anonymous"
+		goto back
 	}
 
 	c.commands <- command{

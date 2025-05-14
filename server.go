@@ -89,6 +89,7 @@ func (s *server) join(c *client, args []string) {
 		}
 		s.rooms[roomName] = r
 	}
+
 	r.members[c.conn.RemoteAddr()] = c
 
 	s.quitCurrentRoom(c)
@@ -97,20 +98,24 @@ func (s *server) join(c *client, args []string) {
 	r.broadcast(c, fmt.Sprintf("%s has joined the room", c.nick))
 
 	c.msg(fmt.Sprintf("welcome to %s", r.name))
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
+	if roomName == "general" {
+		file, err := os.Open(filename)
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+		}
+		defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		c.msg(scanner.Text())
-	}
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			c.msg(scanner.Text())
+		}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
+		if err := scanner.Err(); err != nil {
+			fmt.Println("Error reading file:", err)
+		}
+	} else {
+		c.msg("you have joined a secret room!")
 	}
 
 }
@@ -146,7 +151,6 @@ func (s *server) quit(c *client) {
 	c.msg("sad to see you go :(")
 	c.conn.Close()
 
-	//s.wg.Done()
 }
 
 func (s *server) help(c *client) {
