@@ -11,8 +11,7 @@ type room struct {
 	sync.RWMutex
 }
 
-func (r *room) broadcast(sender *client, msg string) {
-
+func (r *room) broadcast(msg string) {
 	r.RLock()
 	defer r.RUnlock()
 	for _, m := range r.members {

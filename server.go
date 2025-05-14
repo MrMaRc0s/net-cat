@@ -70,7 +70,7 @@ func (s *server) nick(c *client, args []string) {
 }
 
 func (s *server) join(c *client, args []string) {
-	if len(args) < 2 {
+	if len(args) != 2 || args[1] == "" {
 		c.msg("room name is required. usage: /join ROOM_NAME")
 		return
 	}
@@ -95,7 +95,7 @@ func (s *server) join(c *client, args []string) {
 	s.quitCurrentRoom(c)
 	c.room = r
 
-	r.broadcast(c, fmt.Sprintf("%s has joined the room", c.nick))
+	r.broadcast(fmt.Sprintf("%s has joined the room", c.nick))
 
 	c.msg(fmt.Sprintf("welcome to %s", r.name))
 	if roomName == "general" {
@@ -136,7 +136,7 @@ func (s *server) msg(c *client, args []string) {
 	msg := strings.Join(args[1:], " ")
 	msgline := "[" + time.Now().Format("2006-01-02 15:04:05") + "]" + "[" + c.nick + "]" + ": " + msg
 	if c.room != nil {
-		c.room.broadcast(c, msgline)
+		c.room.broadcast(msgline)
 		file.WriteString(msgline + "\n")
 	} else {
 		c.msg("join a room first n'wah")
@@ -150,7 +150,7 @@ func (s *server) quit(c *client) {
 
 	c.msg("sad to see you go :(")
 	c.conn.Close()
-
+	s.wg.Done()
 }
 
 func (s *server) help(c *client) {
@@ -161,6 +161,7 @@ func (s *server) quitCurrentRoom(c *client) {
 	if c.room != nil {
 		oldRoom := s.rooms[c.room.name]
 		delete(s.rooms[c.room.name].members, c.conn.RemoteAddr())
-		oldRoom.broadcast(c, fmt.Sprintf("%s has left the room", c.nick))
+		oldRoom.broadcast(fmt.Sprintf("%s has left the room", c.nick))
+		c.room = nil
 	}
 }
