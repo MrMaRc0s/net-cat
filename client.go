@@ -73,11 +73,10 @@ func (c *client) readInput() {
 				}
 			}
 		} else {
-			// Handle regular message (non-command)
 			c.commands <- command{
 				id:     CMD_MSG,
 				client: c,
-				args:   []string{"/msg", msg}, // Treat the entire message as content
+				args:   []string{"/msg", msg},
 			}
 		}
 	}
@@ -121,5 +120,9 @@ func (c *client) err(err error) {
 }
 
 func (c *client) msg(msg string) {
+	if strings.TrimSpace(msg) == "" {
+		c.msg("you can't send an empty message you n'wah")
+		return
+	}
 	c.conn.Write([]byte("> " + msg + "\n"))
 }

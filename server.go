@@ -134,6 +134,10 @@ func (s *server) msg(c *client, args []string) {
 	defer file.Close()
 
 	msg := strings.Join(args[1:], " ")
+	if strings.TrimSpace(msg) == "" {
+		c.msg("you can't send an empty message you n'wah")
+		return
+	}
 	msgline := "[" + time.Now().Format("2006-01-02 15:04:05") + "]" + "[" + c.nick + "]" + ": " + msg
 	if c.room != nil {
 		c.room.broadcast(msgline)

@@ -2,6 +2,8 @@
 
 - Message History
 
+- fix: [USAGE]: ./TCPChat $port error
+
 - +Is the chat group informed if a Client changes his name? (CGaldan)
 
 - +Does the server produce logs about Clients activities? (CGaldan)
