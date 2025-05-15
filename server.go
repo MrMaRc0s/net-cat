@@ -64,6 +64,9 @@ func (s *server) nick(c *client, args []string) {
 		c.msg("nick is too large, the limit is 20 characters")
 		return
 	}
+	if c.nick != "" {
+		c.room.broadcast(c.nick + " has changed his name to " + args[1])
+	}
 
 	c.nick = args[1]
 	c.msg(fmt.Sprintf("you will be called %s", c.nick))

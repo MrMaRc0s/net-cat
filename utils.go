@@ -13,6 +13,7 @@ func AssingPort() string {
 		port = ":" + os.Args[len(os.Args)-1]
 	} else {
 		port = ":8989"
+		log.Printf("wrong usage [USAGE]: ./TCPChat $port. server will open in default port 8989")
 	}
 	return port
 }
