@@ -5,17 +5,18 @@ import (
 	"log"
 	"net"
 	"os"
-	"unicode"
+	"strconv"
 )
 
 func AssingPort() string {
 	var port string
 	if len(os.Args) == 2 {
-		port = ":" + os.Args[len(os.Args)-1]
-		if !isnumeric(os.Args[1]) {
-			log.Printf("[USAGE]: ./TCPChat $port")
+		port_num, err := strconv.Atoi(os.Args[1])
+		if err != nil || port_num < 0 || port_num > 65535 {
+			log.Printf("port must be a number and between 0 and 65535")
 			os.Exit(1)
 		}
+		port = ":" + os.Args[len(os.Args)-1]
 	} else if len(os.Args) == 1 {
 		port = ":8989"
 	} else {
@@ -47,13 +48,4 @@ func handleShutdown(stop chan os.Signal, listener net.Listener, s *server) {
 	close(s.commands)
 	s.wg.Wait()
 	os.Exit(0)
-}
-
-func isnumeric(str string) bool {
-	for _, char := range str {
-		if !unicode.IsDigit(char) {
-			return false
-		}
-	}
-	return true
 }
