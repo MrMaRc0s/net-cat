@@ -17,7 +17,12 @@ func main() {
 
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("unable to start server: %s", err.Error())
+		log.Printf("Failed to start server on %s: server have opened on default port", port)
+		listener, err = net.Listen("tcp", ":8989")
+		port = ":8989"
+		if err != nil {
+			log.Fatal("Failed to start server:", err)
+		}
 	}
 	defer listener.Close()
 
