@@ -98,7 +98,7 @@ back:
 		return
 	}
 	nickname = strings.Trim(nickname, "\r\n")
-	if strings.TrimSpace(nickname) == "" {
+	if strings.TrimSpace(nickname) == "" || len(nickname) > 20 {
 		goto back
 	}
 
